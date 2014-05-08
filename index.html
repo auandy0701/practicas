@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="css/jquery.mobile.theme-1.0.min.css" rel="stylesheet" type="text/css"/>
+<link href="css/jquery.mobile.structure-1.0.min.css" rel="stylesheet" type="text/css"/>
+<script src="phonegap.js"></script>
+<script src="js/jquery-1.6.4.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.0.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+	document.addEventListener("deviceready",function(){
+	
+	var boton=$("#guardar");
+	boton.tap(function(){
+	var marc=$("#marca").val();
+	var mod=$("#modelo").val();
+	var col=$("#color").val();
+	var prec=$("#precio").val();
+	if(marc!="" && mod!="" && col!="" && prec!=""){
+		enviar(marc,mod,col,prec);
+	}else{
+		alert("Favor de registrar datos en los campos");
+	}
+	//alert("funciona");
+	});
+	var btnconsulta=$("#consultar");
+	btnconsulta.tap(function(){
+		$.ajax({
+			type:"POST",
+			url:"http://auroreizhon.260mb.net/aurora/consulta.php",
+			data: "",
+			success: consultando
+			});	
+	
+		});
+		
+	//actualizar
+var btnactualizar=$("#actualizar");
+	btnactualizar.tap(function(){
+	var colorac=$("#colorA").val();
+	var colornu=$("#colorN").val();
+		if(colorac!="" && colornu!=""){
+		actualiza(colorac,colornu);
+	}else{
+		//alert("Favor de registrar datos en los campos");
+	}
+	//alert("funciona");
+	});
+	
+//eliminar
+
+var btneliminar=$("#eliminar");
+	btneliminar.tap(function(){
+	var idautomovil=$("#id_auto").val();
+		if(idautomovil!=""){
+		elimina(idautomovil);
+	}else{
+		//alert("Favor de registrar datos en los campos");
+	}
+	//alert("funciona");
+	});
+},false);
+});
+function consultando(data){
+	var registro=$.parseJSON(data);
+	var mostrar=$("#datos");
+	for(var i in registro){
+		mostrar.append(registro[i].id_auto+" "+registro[i].Marca+" "+registro[i].Modelo+" "+registro[i].Color+" "+registro[i].Precio+"<br/>");
+		}
+	
+	
+	//alert(data);
+	}
+	
+
+function enviar(marc,mod,col,prec){
+	$.ajax({
+		type: "POST",
+		url: "http://auroreizhon.260mb.net/aurora/procesar.php",
+		data: "Marca="+marc+"&Modelo="+mod+"&Color="+col+"&Precio="+prec,
+		success: onSuccess
+	}).done(function(msg){
+		if(msg==1){
+				
+		}else{
+			//navigator.notification.alert("Hubo un error en el registro",null,"Error","Aceptar");
+		}
+	});
+	function onSuccess(data)
+            {            
+	    alert(data);
+            }
+			
+		//	alert("funciona");
+}
+
+function actualiza(colorac,colornu){
+	$.ajax({
+		type: "POST",
+		url: "http://auroreizhon.260mb.net/aurora/actualizar.php",
+		data: "ColorA="+colorac+"&ColorN="+colornu,
+		success: onSuccess
+	}).done(function(msg){
+		if(msg==1){
+				
+		}else{
+			//navigator.notification.alert("Hubo un error en el registro",null,"Error","Aceptar");
+		}
+	});
+	
+
+	function onSuccess(data)
+            {            
+	    alert(data);
+            }
+			
+		//	alert("funciona");
+}
+
+function elimina(idautomovil){
+	$.ajax({
+		type: "POST",
+		url: "http://auroreizhon.260mb.net/aurora/eliminar.php",
+		data: "IdAutomovil="+idautomovil,
+		success: onSuccess
+	}).done(function(msg){
+		if(msg==1){
+				
+		}else{
+			//navigator.notification.alert("Hubo un error en el registro",null,"Error","Aceptar");
+		}
+	});
+	
+
+	function onSuccess(data)
+            {            
+	    alert(data);
+            }
+			
+		//alert("funciona");
+}
+
+</script>
+<title>Documento sin título</title>
+
+</head>
+<body>
+
+<div data-role="page" id="principal">
+	<div data-role="header">
+	<p>Principal</p>
+	</div>
+    <div data-role="content">
+    <a href="#captura" data-role="button">Capturar</a>
+    <a href="#consultas" data-role="button">Consultas</a>
+    <a href="#actualizar" data-role="button">Actualizar</a>
+    <a href="#eliminar" data-role="button">Eliminar</a>
+    </div>
+    <div data-role="footer">
+     
+    </div>
+    </div>
+
+<div data-role="page" id="captura">
+<div data-role="header">
+	<p>Principal</p>
+	</div>
+    <div data-role="content">
+    <ul data-role="listview">
+            <li><input type="text" id="marca" placeholder="Marca" /></li>
+            <li><input type="text" id="modelo" placeholder="Modelo" /></li>
+            <li><input type="text" id="color" placeholder="Color" /></li>       
+            <li><input type="text" id="precio" placeholder="Precio" /></li>  
+        </ul>
+    </div>
+    <div data-role="footer">
+    <a href="#" data-role="button" id="guardar">Guardar</a>
+    <a href="#principal" data-role="button">Menú Principal</a>
+    </div>
+</div>
+
+<div data-role="page" id="consultas">
+<div data-role="header">
+	<p>Principal</p>
+	</div>
+    <div data-role="content">
+    <a href="#" id="consultar" data-role="button">Consultar</a>
+    
+    <div id="datos">
+    </div>
+    </div>
+   <div data-role="footer">
+    <a href="#principal" data-role="button">Menú Principal</a>
+    </div>
+</div>
+
+<div data-role="page" id="actualizar">
+<div data-role="header">
+	<p>Principal</p>
+	</div>
+    <div data-role="content">
+    <ul data-role="listview">
+           
+            <li><input type="text" id="colorA" placeholder="Color Actual" /></li> 
+            <li><input type="text" id="colorN" placeholder="Color Nuevo" /></li>       
+                    </ul>
+        <div id="datos">
+    </div>
+    </div>
+   <div data-role="footer">
+   <a href="#" id="actualizar" data-role="button">Actualizar</a>
+   <a href="#principal" data-role="button">Menú Principal</a>
+    </div>
+</div>
+
+
+<div data-role="page" id="eliminar">
+<div data-role="header">
+	<p>Principal</p>
+	</div>
+    <div data-role="content">
+    <ul data-role="listview">
+           
+            <li><input type="text" id="id_auto" placeholder="id_Auto" /></li> 
+            
+                    </ul>
+    <div id="datos">
+    </div>
+    </div>
+   <div data-role="footer">
+   <a href="#" id="eliminar" data-role="button">Eliminar</a>
+   <a href="#principal" data-role="button">Menú Principal</a>
+    </div>
+</div>
+
+</body>
+</html>
